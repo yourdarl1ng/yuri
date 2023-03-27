@@ -6,7 +6,6 @@ To install them open your cmd and type:
 
 `pip install colorama`
 
-`pip install signal`
 ### if you get an error that `pip` isn't recognized as a command try replacing it with `pip3`
 ### if you still get package not found error, install it with `pip install <yourpackage>`
 
