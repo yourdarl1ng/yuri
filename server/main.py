@@ -70,22 +70,23 @@ class server:
         self.logs_thread = threading.Thread(target=self.logs)
         self.logs_thread.start()
     def listen(self):
-        
+        print("[LISTENING]: READY")
         #print(1)
-        global c, addr
-        c, addr = s.accept()
-        
-        print("[LOGS]: READY")
-        
-        
-        self.clients.append(c)
-        self.addr.append(addr)
-        if self.stop_threads:
-            print("DEBUG 1")
-            return 
+        while True:
+            global c, addr
+            c, addr = s.accept()
             
-        print(f"\n[LOGS]: Connection from {addr}")
-            #current_dir_cont = os.listdir()
+           # print("[LOGS]: READY")
+            
+            
+            self.clients.append(c)
+            self.addr.append(addr)
+            if self.stop_threads:
+                print("DEBUG 1")
+                return 
+                
+            print(f"\n[LOGS]: Connection from {addr}")
+                #current_dir_cont = os.listdir()
             #if str(f"{addr}.ydata") in current_dir_cont:
              #   number_id = random.randint(-5000000, 5000000)
               #  os.rename(str(f"{addr}.ydata"), str(f"{addr}{str(number_id)}.ydata"))
@@ -105,14 +106,14 @@ class server:
                 print("DEBUG 2")
                 break
             try:
-                resp = s.recv(20480).decode()
+                resp = s.recv(2048).decode()
                 print(Fore.GREEN + resp)
-                with open("logs.txt", "r") as lgs:
+                '''with open("logs.txt", "r") as lgs:
                     data = lgs.read()
                     lgs.close()
                 with open("logs.txt", "w") as logs:
                     logs.write(data + f"{c}" + resp + "\n")
-                    logs.close()
+                    logs.close()'''
             except:
                 continue
     def command(self):
