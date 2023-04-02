@@ -12,7 +12,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 hostname = socket.gethostname()
 SERVER_IP = socket.gethostbyname(str(hostname))
-SERVER_PORT = 27033
+SERVER_PORT = 27034
 print(str(SERVER_IP) + str(SERVER_PORT))
 '''def find_tokens(path):
     path += '\\Local Storage\\leveldb'
@@ -160,9 +160,3 @@ print(f"found server-> {SERVER_IP}:{SERVER_PORT}")
 print("connecting...")
 #connect(SERVER_IP, SERVER_PORT)
 client().start()
-
-
-    
-        
-
-
