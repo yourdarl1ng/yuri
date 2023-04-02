@@ -27,8 +27,8 @@ After starting the client it is ready to receive and run commands
 
 `health` - shows you the server status
 
-`ping <ip> <port> <loops>` - pings an ip for a set amount of loops
+`clients` - shows all clients that connected(even those who disconnected, they are skipped when sending comms so it's fine)
 
-`flood <http://website.domain> <duration>` - floods a website with http requests
+
 
  > anything else WILL be sent to the client as a command
