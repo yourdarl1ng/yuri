@@ -12,9 +12,7 @@ signal(SIGPIPE,SIG_DFL)
 greetings_n = random.randint(1, 3)
 if int(greetings_n) == 1:
     print(Fore.RED + " ______   _____ ______   _____    ___________        ____________   ")
-
     print(Fore.RED + "|\     \ |     |\     \  \    \   \          \      /            \  ")
-
     print(Fore.RED + "\ \     \|     | \    |  |    |    \    /\    \    |\___/\  \\___/| ")
     print(Fore.RED + "\ \           |  |   |  |    |     |   \_\    |    \|____\  \___|/ ")
     print(Fore.RED + "\ \____      |  |    \_/   /|     |      ___/           |  |      ")
@@ -176,7 +174,10 @@ class server:
             
                 print("[LOGS]: Sending command to clients")
                 for client in self.clients:
-                    client.sendall(str(comm).encode())
+                    try:
+                        client.sendall(str(comm).encode())
+                    except Exception as e:
+                        print(f"{client} failed to respond")
                 print("[LOGS]: Sent command to clients")
            #     continue
                 #print("[ERROR]: Couldn't send command")
