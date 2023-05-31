@@ -25,10 +25,8 @@ After starting the client it is ready to receive and run commands
 
 `info` - shows info about the program
 
-`health` - shows you the server status
-
 `clients` - shows all clients that connected(even those who disconnected, they are skipped when sending comms so it's fine)
 
 
 
- > anything else WILL be sent to the client as a command
+ > anything WILL be sent to the client as a command
