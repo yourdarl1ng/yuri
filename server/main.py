@@ -5,6 +5,12 @@ logs = {}
 #here we'll store the client handlers so we can manage clients separately
 clients = {}
 #the client handle(used to accept and manage connections)
+
+print(" __  __     __  __     ______     __    ")
+print("/\ \_\ \   /\ \/\ \   /\  == \   /\ \   ")
+print("\ \____ \  \ \ \_\ \  \ \  __<   \ \ \  ")
+print(" \/\_____\  \ \_____\  \ \_\ \_\  \ \_\ ")
+print("  \/_____/   \/_____/   \/_/ /_/   \/_/ ")
 class ClientHandle:
     #accept connection, socket_a is the socket object
     def accept(self, socket_a):
@@ -89,12 +95,14 @@ class Server():
         elif self.command.lower() == "client info":
             print(clients[self.command.split("client info")[1]])
         elif self.command.strip().lower() == "help":
-            print("All commands: help, clients, client info [client], ")
+            print("All commands: help, clients, client info [client], info")
+        elif self.command.strip().lower() == "info":
+            print("Made by Minex\nVersion: 1.2\ngithub.com/yourdarl1ng")
         elif self.command.strip().lower() == "shm":
             self.supress_message = not self.supress_message
         else:
             if not self.supress_message:
-                print("Need help? Type 'help' or shm to 'supress' this message")
+                print("Need help? Type 'help' or 'shm' to supress this message")
     #function(we thread this one) for receiving input and sending it to the client
     def commands(self):
         while True:
