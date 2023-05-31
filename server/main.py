@@ -91,7 +91,7 @@ class Server():
         #.strip() strips it of spaces and .lower() converts UPPERCASE letters into lowercase
         if self.command.strip().lower() == "clients":
             print(clients)
-            print(f"[SERVER]: Connected clients->{len(clients.keys())}")
+            print(f"[SERVER]: Connected clients->{int(len(clients.keys())/2)}")
         elif self.command.lower() == "client info":
             print(clients[self.command.split("client info")[1]])
         elif self.command.strip().lower() == "help":
