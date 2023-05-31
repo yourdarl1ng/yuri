@@ -84,6 +84,7 @@ class Server():
         #starts the listening thread(for clients)
         threading.Thread(target=self.listen).start()
     #used for internal commands
+    def recognize_internal_command(self):
         #need to use the global for this, otherwise we'd get an error
         global clients
         #just checking for recognized commands
