@@ -66,6 +66,8 @@ class Client:
                 self.connect()
                 #after the connection is successful this thread resumes working as normal
                 print("Reconnected!")
+                #clearing data buffer
+                self.data = ""
             #just some commands, feel free to play around with this
             if self.data == "SELF_DESTRUCT":
                 sys.exit(0)
