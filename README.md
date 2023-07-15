@@ -1,6 +1,7 @@
 # Yuri trojan
-reverse shell trojan & token stealer written in python
-currently in development and doesn't fully work(or at all) the base is written to run on localhost!
+reverse shell trojan written in python.
+It's more of a fun project for me, so please don't judge the code quality :)
+
 
 # You need some libs to run the server!
 To install them open your cmd and type:
