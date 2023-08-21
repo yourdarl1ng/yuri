@@ -11,6 +11,7 @@ print("/\ \_\ \   /\ \/\ \   /\  == \   /\ \   ")
 print("\ \____ \  \ \ \_\ \  \ \  __<   \ \ \  ")
 print(" \/\_____\  \ \_____\  \ \_\ \_\  \ \_\ ")
 print("  \/_____/   \/_____/   \/_/ /_/   \/_/ ")
+#yes
 class ClientHandle:
     #accept connection, socket_a is the socket object
     def accept(self, socket_a):
